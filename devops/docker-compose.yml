@@ -1,0 +1,46 @@
+services:
+  db:
+    image: mysql:latest # dev only, on prod, we would use a SPECIFIC version
+    container_name: db
+    working_dir: /app
+    command: [ mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --innodb-file-per-table=1]
+    env_file: ../.env
+    volumes:
+      - db-storage:/var/lib/mysql
+    networks:
+      - appnetwork
+    restart: unless-stopped 
+
+  api:
+    container_name: api
+    build:
+        context: ..
+        dockerfile: ./devops/Dockerfile # relative to the context
+    env_file: ../.env
+    volumes:
+      - ..:/var/www/html
+      - ./php.ini:/usr/local/etc/php/php.ini
+    ports:
+      - 9000:80
+    depends_on:
+      - db
+    networks:
+      - appnetwork
+    restart: "no"
+
+  adminer:
+    container_name: adminer
+    image: adminer:latest # dev only, on prod, we would use a SPECIFIC version
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    networks:
+      - appnetwork
+    restart: unless-stopped
+
+volumes:
+  db-storage:
+
+networks:
+  appnetwork:
