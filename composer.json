@@ -10,7 +10,8 @@
         "slim/slim": "^4.0",
         "slim/psr7": "^1.0",
         "vlucas/phpdotenv": "^5.0",
-        "guzzlehttp/guzzle": "^7.0"
+        "guzzlehttp/guzzle": "^7.0",
+        "php-decimal/php-decimal": "^1.1"
     },
     "autoload": {
         "psr-4": {
