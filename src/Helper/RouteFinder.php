@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Helper;
 
+use Psr\Container\ContainerInterface;
 use App\Controller\Common\AbstractController;
 use Slim\App;
 
@@ -23,6 +24,7 @@ class RouteFinder
      * Searches CONTROLLER_PATH (usually src/Controller) recursively for all classes extending AbstractController in *Controller.php files
      * @see \App\Controller\AbstractController
      * @see \App\Helper\RouteFinder::CONTROLLER_PATH
+     * @param App<ContainerInterface> $app - App<ContainerInterface|null> (phpstan has a bug with this)
      * @throws \ReflectionException
      */
     public function findAndRegisterControllerRoutes(App $app): void
@@ -38,7 +40,7 @@ class RouteFinder
             }
 
             // filepath => FQN of the class
-            $controllerClass = $this->getControllerClassNameByControllerFilepath($file->getPathname());
+            $controllerClass = $this->getControllerClassFqnByControllerFilepath($file->getPathname());
 
             // make sure it's SOME Controller, just not the AbstractController itself
             if (!is_subclass_of($controllerClass, AbstractController::class)) {
@@ -52,7 +54,7 @@ class RouteFinder
         }
     }
 
-    /** gets src/Controller tree iterator */
+    /** @return \RecursiveIteratorIterator<\RecursiveDirectoryIterator> -  gets src/Controller tree iterator */
     private function getControllerDirectoryIterator(): \RecursiveIteratorIterator
     {
         return new \RecursiveIteratorIterator(
@@ -60,8 +62,8 @@ class RouteFinder
         );
     }
 
-    /** @return class-string<AbstractController> */
-    private function getControllerClassNameByControllerFilepath(string $controllerFilepath): string
+    /** @return string - parsed out class name with namespace (FQN) */
+    private function getControllerClassFqnByControllerFilepath(string $controllerFilepath): string
     {
         // /src/ === App\ => [1] => Something\In\AppNamespace
         $namespacePathWithExt = \explode(\DIRECTORY_SEPARATOR.self::SRC_DIRECTORY_NAME.\DIRECTORY_SEPARATOR, $controllerFilepath)[1];
@@ -70,7 +72,9 @@ class RouteFinder
     }
 
     /**
+     * @param App<ContainerInterface> $app - App<ContainerInterface|null> (phpstan has a bug with this)
      * @param class-string<AbstractController> $controllerClass
+     *
      * @throws \ReflectionException
      */
     private function registerControllerRoutes(App $app, string $controllerClass): void

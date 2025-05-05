@@ -10,6 +10,10 @@ use App\Controller\Common\Enum\HttpMethod;
 
 abstract class AbstractController
 {
+    public function __construct()
+    {
+    }
+    /** @param App<\Psr\Container\ContainerInterface|null> $app */
     final public function registerRoutes(App $app): void
     {
         foreach ($this->getRouteAttributes() as $classMethod => $route) {
@@ -27,7 +31,7 @@ abstract class AbstractController
         }
     }
 
-    /** @return list<Route> */
+    /** @return array<string,Route> - Route attribute instances keyed by their class method */
     final protected function getRouteAttributes(): array
     {
         $attrReflection = new \ReflectionClass($this);
