@@ -14,6 +14,7 @@ while [ "$1" != "" ]; do
             case $COLOR_OPTION in
                 white) TEXT_COLOR="37" ;;
                 black) TEXT_COLOR="30" ;;
+                purple) TEXT_COLOR="35" ;;
                 *) echo "Invalid --color option"; exit 1 ;;
             esac
             ;;
@@ -27,6 +28,7 @@ while [ "$1" != "" ]; do
                 white) BG_COLOR="47" ;;
                 purple) BG_COLOR="45" ;;
                 pink) BG_COLOR="105" ;;
+                transparent) BG_COLOR="49" ;; # 49 = default bg; 0 would reset all
                 *) echo "Invalid --bg option"; exit 1 ;;
             esac
             ;;
