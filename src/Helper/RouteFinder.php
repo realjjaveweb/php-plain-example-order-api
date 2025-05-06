@@ -16,6 +16,9 @@ class RouteFinder
     public const CONTROLLER_FILE_SUFFIX = 'Controller';
     public const CONTROLLER_FILE_EXTENSION = '.php';
 
+    private const CACHE_DIRECTORY = APP_ROOT . '/var/cache/routeFinder';
+    private const CACHE_FILE_CONTROLLERS = self::CACHE_DIRECTORY . '/controllers.cache.php';
+
     public function __construct()
     {
     }
@@ -29,6 +32,18 @@ class RouteFinder
      */
     public function findAndRegisterControllerRoutes(App $app): void
     {
+        $cachedControllerClasses = $this->getCachedControllers();
+        if ($cachedControllerClasses !== null) {
+            foreach ($cachedControllerClasses as $controllerClass) {
+                $this->registerControllerRoutes(
+                    app: $app,
+                    controllerClass: $controllerClass,
+                );
+            }
+            return;
+        }
+
+        $controllerClasses = [];
         foreach ($this->getControllerDirectoryIterator() as $file) {
             if (!($file instanceof \SplFileInfo)) {
                 throw new \RuntimeException(\RecursiveDirectoryIterator::class . 'did not return ' . \SplFileInfo::class);
@@ -47,11 +62,14 @@ class RouteFinder
                 continue;
             }
 
+            $controllerClasses[] = $controllerClass;
             $this->registerControllerRoutes(
                 app: $app,
                 controllerClass: $controllerClass,
             );
         }
+
+        $this->cacheControllers($controllerClasses);
     }
 
     /** @return \RecursiveIteratorIterator<\RecursiveDirectoryIterator> -  gets src/Controller tree iterator */
@@ -84,5 +102,31 @@ class RouteFinder
         $controllerNoConstruct = $controllerClassReflection->newInstanceWithoutConstructor();
         // string is fine here, if method would not exist, it would throw the \ReflectionException
         $controllerClassReflection->getMethod('registerRoutes')->invoke($controllerNoConstruct, $app);
+    }
+
+    private function ensureCacheDirectoryExists(): void
+    {
+        if (!\is_dir(self::CACHE_DIRECTORY)) {
+            \mkdir(self::CACHE_DIRECTORY, 0775, recursive: true);
+        }
+    }
+
+    /** @param array<class-string<AbstractController>> $controllerClasses */
+    private function cacheControllers(array $controllerClasses): void
+    {
+        $this->ensureCacheDirectoryExists();
+        \file_put_contents(
+            self::CACHE_FILE_CONTROLLERS,
+            '<?php return ' . \var_export($controllerClasses, return: true) . ';'
+        );
+    }
+
+    /** @return array<class-string<AbstractController>> */
+    private function getCachedControllers(): ?array
+    {
+        if (!\file_exists(self::CACHE_FILE_CONTROLLERS)) {
+            return null;
+        }
+        return require self::CACHE_FILE_CONTROLLERS;
     }
 }
