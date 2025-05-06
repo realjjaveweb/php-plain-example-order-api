@@ -36,6 +36,9 @@ clear_cache: ## clears composer cache & regenerates autoload files
 	docker compose --file $(DOCKER_COMPOSE_FILE) exec api composer clear-cache
 	docker compose --file $(DOCKER_COMPOSE_FILE) exec api composer dump-autoload
 
+db_migrate: ## runs the database migrations
+	docker compose --file $(DOCKER_COMPOSE_FILE) exec api php ./bin/Command/CreateSchema.php
+	docker compose --file $(DOCKER_COMPOSE_FILE) exec api php ./bin/Command/GenerateTestData.php
 
 #
 # Analysis/Tool commands

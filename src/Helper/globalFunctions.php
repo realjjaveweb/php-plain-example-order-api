@@ -46,3 +46,27 @@ if (!function_exists('dd')) {
         exit(1); // intentionally exit with an error code instead of success (0)
     }
 }
+
+if (!function_exists('cliMsg')) {
+    function cliMsg(string $message, string $color = 'green'): void
+    {
+        if (!isCli()) {
+            return;
+        }
+
+        $color = match ($color) {
+            'green' => '32',
+            'red' => '31',
+            'yellow' => '33',
+            'blue' => '34',
+            default => '32',
+        };
+
+        $cliLineLength = 80;
+        $cliLine = "\033[1;".$color.'m' . \str_repeat('-', $cliLineLength)."\033[0m" . \PHP_EOL;
+
+        echo $cliLine;
+        echo "\033[1;".$color.'m'.$message."\033[0m" . \PHP_EOL;
+        echo $cliLine;
+    }
+}
