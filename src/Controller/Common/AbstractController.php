@@ -26,7 +26,9 @@ abstract class AbstractController
             $app->map(
                 methods: $requestMethodStrings,
                 pattern: $route->path,
-                callable: $this->$classMethod(...),
+                // following does not work with DI/autowiring
+                // callable: $this->$classMethod(...),
+                callable: [$this::class, $classMethod],
             );
         }
     }

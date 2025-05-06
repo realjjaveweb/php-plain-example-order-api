@@ -11,7 +11,13 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use App\Helper\RouteFinder;
 use Slim\Factory\AppFactory;
 
-$app = AppFactory::create();
+// $app = AppFactory::create(); // original Slim factory
+$app = \DI\Bridge\Slim\Bridge::create(
+    new DI\Container([
+        // ...
+    ]),
+);
+
 
 (new RouteFinder())->findAndRegisterControllerRoutes($app);
 
