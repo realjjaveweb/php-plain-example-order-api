@@ -53,6 +53,7 @@ csfix-dry: ## checks php formatting in a "dry" run, only showing what files WOUL
 		./devops/bin/javeLikesPadding.sh "✨ ✨ ✨ WHOAH! YOUR CODE JUST SHINES! ✨ ✨ ✨" --bg=green --color=black; \
 	else \
 		./devops/bin/javeLikesPadding.sh "⚠️  ❕❕ ATTENTION ❕❕ ⚠️" --bg=red --color=white --bold; \
+		exit $$EXIT_CODE; \
 	fi; \
 	' # END OF sh -c
 
@@ -72,11 +73,11 @@ phpunit: ## TODO: runs unit tests (phpunit)
 	@docker compose --file $(DOCKER_COMPOSE_FILE) exec api ./devops/bin/javeLikesPadding.sh "TODO: phpunit" --bg=yellow --color=black --bold
 
 
-test: ## runs fixer, static analysis, unit tests, etc...
+test: ## runs fixer CHECK(dry), static analysis, unit tests, etc...
 	@$(MAKE) --no-print-directory _line
 	@docker compose --file $(DOCKER_COMPOSE_FILE) exec api echo -e "\033[1;35mRUNNING COMPLETE ANALYSIS\033[0m\nLines \"\033[1;35m-----\033[0m\" separate each step"
 	@$(MAKE) --no-print-directory _line
-	@$(MAKE) --no-print-directory csfix
+	@$(MAKE) --no-print-directory csfix-dry
 	@$(MAKE) --no-print-directory _line
 	@$(MAKE) --no-print-directory phpstan
 	@$(MAKE) --no-print-directory _line
