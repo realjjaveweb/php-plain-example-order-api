@@ -32,7 +32,10 @@ rebuild: _api_down _api_rebuild _api_up ## stop&remove api container => rebuild 
 install: ## runs the initial install
 	docker compose --file $(DOCKER_COMPOSE_FILE) exec api composer install
 
-clear_cache: ## clears composer cache & regenerates autoload files
+route_cache_clear: ## clears cache for routeFinder (mainly the Controller list)
+	docker compose --file $(DOCKER_COMPOSE_FILE) exec api rm -rf var/cache/routeFinder/*
+
+cache_clear: route_cache_clear ## clears composer cache & regenerates autoload files
 	docker compose --file $(DOCKER_COMPOSE_FILE) exec api composer clear-cache
 	docker compose --file $(DOCKER_COMPOSE_FILE) exec api composer dump-autoload
 
