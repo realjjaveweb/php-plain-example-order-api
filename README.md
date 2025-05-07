@@ -6,16 +6,20 @@
 ## Requirements
 - `git` available (`sudo apt install git`)
 - `make` command available (`sudo apt install make`)
-- latest Docker Engine (cli) installed and **set up correctly** (emphasis on the post-install user&group, logout&login)
-  - installation guide (Ubuntu): https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
-    - other platforms/distributions: https://docs.docker.com/engine/install/
-  - **post-install config:** https://docs.docker.com/engine/install/linux-postinstall/
-  
+- Latest Docker Engine (CLI) installed and **set up correctly** (emphasis on the post-install user & group, logout & login).
+  - Installation guide (Ubuntu): https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+    - Other platforms/distributions: https://docs.docker.com/engine/install/
+  - **Post-install config:** https://docs.docker.com/engine/install/linux-postinstall/
+
 ## Set up
 1. clone the repository
 2. `cd` into the repository root
-3. run `make up`, sit, wait, have a ☕
-4. done: http://localhost:9000 (/api/...)
+3. Create a `.env` file from `.env.example` and set up the environment variables
+    - **Note:** create the `.env` file **NOW** - it's used by the docker compose too - so it must be present before step "4."
+4. Run `make up`, sit, wait, have a ☕
+5. Run `make install` to do the initial installation of packages
+6. Run `make db_migrate` to create & fill the test database
+7. Done: http://localhost:9000 (/api/...)
 
 Run `make help` to list more handy commands, run `make test` before you send any code to the world 😉
 
