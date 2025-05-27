@@ -1,5 +1,10 @@
 # PHP plain - example Order API
 
+## Disclaimer
+This project is not a fully DDD(domain driven design) or a fully hexagonal architecture,
+it's a simple showcase how a project could be set up and how to abstract the data source, the same approach used for the Repository could be applied to the controlling/view side.
+The purpose of the chosen solution was to show abstraction, yet not to overengineer - so please, take it with a grain of salt - it's just an example, not a full-on production app.
+
 ## Recommendations
 - tested on Ubuntu 24
 
